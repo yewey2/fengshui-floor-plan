@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Fengshui</title>
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+  <main>
+    <div id="main" class="main">
+      <div id="left">
+        <h1>Fengshui Analysis</h1>
+        <label for="new_img_upload">Upload image</label>
+        <br>
+        <input type="file" name="new_img_upload" id="new_img_upload" accept="image/*"><br><br>
+        <!-- <button id="myBtn">Submit</button> -->
+        <img id="display_image">
+
+      </div>
+
+      <div id="right">
+        <h1>Sample Image Here</h1>
+        <label for="new_img_angle">Input image angle:   </label><input type="text" id="new_img_angle" />
+        <br>
+        <br>
+        <button onclick="toggle1()">Click me to select top left</button>
+        <br>
+        <br>
+        <button onclick="toggle2()">Click me to select bottom right</button>
+        <br>
+        <br>
+        <button onclick="process_image()">Process Image</button>
+        <br>
+        <br>
+
+
+        <div id="image-container">
+          <img src="" alt="Click Me" id="clickable-image" style="display:none">
+          <div id="overlay-box"></div>
+        </div>
+      
+        <p id="click-coordinates">Click on the image to get coordinates.</p>
+      
+
+
+      </div>
+    </div>
+  </main>
+
+
+  <!-- Script for socket -->
+  <script type="text/javascript" charset="utf-8">
+
+    var socket = io()
+    var click1 = false;
+    var click2 = false;
+
+    function toggle1() {
+      click1 = true;
+      image.style.cursor = "crosshair";
+    }
+    function toggle2() {
+      click2 = true;
+      image.style.cursor = "crosshair";
+    }
+    
+
+    var image = document.getElementById('clickable-image');
+    var coordinatesParagraph = document.getElementById('click-coordinates');
+    var overlayBox = document.getElementById('overlay-box');
+    
+    var clicked_coordinates = {'left': false, 'right': false}
+    var center = false;
+
+    var imageUpload = document.getElementById('new_img_upload');
+
+    var file = null;
+
+
+    imageUpload.addEventListener('change', function(event) {
+      file = event.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        image.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+
+      // show image 
+      image.style.display = 'block';
+      overlayBox.style.display = 'none';
+       
+      // reset clicked coordinates
+      click1 = false;
+      click2 = false;
+      clicked_coordinates = {'left': false, 'right': false}
+      center = false;
+      image.style.cursor = "default";
+    });
+
+    function getCenter() {
+      var x_ = Math.min(clicked_coordinates['left'][0], clicked_coordinates['right'][0]);
+      var y_ = Math.min(clicked_coordinates['left'][1], clicked_coordinates['right'][1]);
+      var w_ = Math.abs(clicked_coordinates['left'][0] - clicked_coordinates['right'][0]);
+      var h_ = Math.abs(clicked_coordinates['left'][1] - clicked_coordinates['right'][1]);
+      overlayBox.style.display = 'block';
+      overlayBox.style.marginTop = y_+'px';
+      overlayBox.style.marginLeft = x_+'px';
+      overlayBox.style.width = w_+'px';
+      overlayBox.style.height = h_+'px';
+      return [x_ + w_ / 2, y_ + h_ / 2];
+
+
+    }
+
+    image.addEventListener('click', function(event) {
+      var rect = image.getBoundingClientRect();
+      var x = event.clientX - rect.left;
+      var y = event.clientY - rect.top;
+
+      coordinatesParagraph.textContent = 'Clicked coordinates: (x: ' + x + ', y: ' + y + ')';
+      if (click1) {
+        clicked_coordinates['left'] = [x, y];
+        click1 = false;
+      } else if (click2) {
+        clicked_coordinates['right'] = [x, y];
+        click2 = false;
+      } else {
+        console.log('none selected');
+        return
+      }
+      image.style.cursor = "default";
+      if (clicked_coordinates['left'] && clicked_coordinates['right']) {
+        
+        center = getCenter();
+        console.log(center);
+
+      }
+
+    });
+    
+    function process_image() {
+      angle = document.getElementById('new_img_angle').value;
+      if (isNaN(angle)) {
+        console.log('angle not a number');
+        return 
+      }
+      socket.emit('process_image', {
+        'angle':angle, 
+        'center':getCenter(),
+        'img':file, }
+      );
+    }
+    
+    socket.on('display_img', function(data) {
+      // console.log(data['img']);
+      // var enc = new TextDecoder("utf-8");
+      // console.log(enc.decode(data['img']));
+      // document.getElementById('display_image').src  = "data:image/png;base64," + enc.decode(data['img']);
+      var blob = new Blob( [ data['img'] ], { type: "image/png" } );
+
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        document.getElementById('display_image').src = e.target.result;
+      };
+
+      reader.readAsDataURL(blob);
+    })
+
+  </script>
+</body>
+</html>
