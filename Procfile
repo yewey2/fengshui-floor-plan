@@ -1,1 +1,1 @@
-web: gunicorn -k gevent -w 1 run:app
+web: gunicorn --timeout 120 --worker-class=gevent --workers=3 run:app
