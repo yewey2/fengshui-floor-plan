@@ -18,9 +18,6 @@ def handle_my_event(data=dict()):
 
 @socketio.on("process_image")
 def handle_my_event(data):
-    # print('data is', data)
-    print(data.get('angle'))
     # negative angle to rotate acw
     img = overlay(data.get('img'), angle=-float(data.get('angle')), center=data.get('center'))
-    print(img)
     emit('display_img', {'img': img})

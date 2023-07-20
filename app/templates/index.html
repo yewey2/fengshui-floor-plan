@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Fengshui</title>
+  <title>Fengshui Floor Plan Analysis</title>
   <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css"/>
   <link rel="icon" href="./favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
@@ -16,9 +16,8 @@
   <main>
     <div id="main" class="main">
       <div id="left">
-        <h1>Fengshui Analysis</h1>
-        <label for="new_img_upload">Upload image</label>
-        <br>
+        <h1>Fengshui Floor Plan Analysis</h1>
+        <label for="new_img_upload">Upload your floor plan here: &nbsp;&nbsp;</label>
         <input type="file" name="new_img_upload" id="new_img_upload" accept="image/*"><br><br>
         <!-- <button id="myBtn">Submit</button> -->
         <img id="display_image">
@@ -27,27 +26,31 @@
 
       <div id="right">
         <h1>Sample Image Here</h1>
-        <label for="new_img_angle">Input image angle:   </label><input type="text" id="new_img_angle" />
-        <br>
-        <br>
-        <button onclick="toggle1()">Click me to select top left</button>
-        <br>
-        <br>
-        <button onclick="toggle2()">Click me to select bottom right</button>
-        <br>
-        <br>
-        <button onclick="process_image()">Process Image</button>
-        <br>
-        <br>
+        <div id="instructions">
+          <div>Step 1:</div>
+          <div>
+            <label for="new_img_angle">Input image angle:   </label><input type="text" id="new_img_angle" />
+          </div>
+          <div>Step 2:</div>
+          <div>
+            <button onclick="toggle1()">Click me to select top left</button>
+          </div>
+          <div>Step 3: &nbsp&nbsp</div>
+          <div>
+            <button onclick="toggle2()">Click me to select bottom right</button>
+          </div>
+          <div>Step 4: &nbsp&nbsp</div>
+          <div>
+            <button onclick="process_image()">Process Image</button>
+          </div>
+        </div>
 
 
         <div id="image-container">
           <img src="" alt="Click Me" id="clickable-image" style="display:none">
           <div id="overlay-box"></div>
         </div>
-      
-        <p id="click-coordinates">Click on the image to get coordinates.</p>
-      
+            
 
 
       </div>
@@ -73,7 +76,6 @@
     
 
     var image = document.getElementById('clickable-image');
-    var coordinatesParagraph = document.getElementById('click-coordinates');
     var overlayBox = document.getElementById('overlay-box');
     
     var clicked_coordinates = {'left': false, 'right': false}
@@ -95,6 +97,7 @@
       reader.readAsDataURL(file);
 
       // show image 
+      document.getElementById('right').style.display = 'block';
       image.style.display = 'block';
       overlayBox.style.display = 'none';
        
@@ -126,7 +129,6 @@
       var x = event.clientX - rect.left;
       var y = event.clientY - rect.top;
 
-      coordinatesParagraph.textContent = 'Clicked coordinates: (x: ' + x + ', y: ' + y + ')';
       if (click1) {
         clicked_coordinates['left'] = [x, y];
         click1 = false;
@@ -141,7 +143,7 @@
       if (clicked_coordinates['left'] && clicked_coordinates['right']) {
         
         center = getCenter();
-        console.log(center);
+        // console.log(center);
 
       }
 
