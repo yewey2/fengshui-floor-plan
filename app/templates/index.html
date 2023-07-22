@@ -35,10 +35,18 @@
           <div>
             <button onclick="toggle1()">Click me to select top left</button>
           </div>
+          <div></div>
+          <div>Or change it here:</div>
+          <div></div>
+          <div>x: <input type="text" id="top_left_value1"> y: <input type="text" id="top_left_value2"></div>
           <div>Step 3: &nbsp&nbsp</div>
           <div>
             <button onclick="toggle2()">Click me to select bottom right</button>
           </div>
+          <div></div>
+          <div>Or change it here:</div>
+          <div></div>
+          <div>x: <input type="text" id="bottom_right_value1"> y: <input type="text" id="bottom_right_value2"></div>
           <div>Step 4: &nbsp&nbsp</div>
           <div>
             <button onclick="process_image()">Process Image</button>
@@ -78,13 +86,60 @@
     var image = document.getElementById('clickable-image');
     var overlayBox = document.getElementById('overlay-box');
     
-    var clicked_coordinates = {'left': false, 'right': false}
+    var clicked_coordinates = {'left': [0,0], 'right': [0,0]}
     var center = false;
+
+    var top_left_value1 = document.getElementById('top_left_value1');
+    var top_left_value2 = document.getElementById('top_left_value2');
+    var bottom_right_value1 = document.getElementById('bottom_right_value1');
+    var bottom_right_value2 = document.getElementById('bottom_right_value2');
 
     var imageUpload = document.getElementById('new_img_upload');
 
     var file = null;
 
+    top_left_value1.addEventListener('change', function(event) {
+      console.log('change', clicked_coordinates);
+      try {
+          clicked_coordinates['left'][0] = +top_left_value1.value
+          center = getCenter();
+        } catch (error) {
+          console.log('error is',error);
+        }
+    })
+    top_left_value2.addEventListener('change', function(event) {
+      console.log('change', clicked_coordinates);
+      try {
+          clicked_coordinates['left'][1] = +top_left_value2.value
+          center = getCenter();
+        } catch (error) {
+          console.log('error is',error);
+        }
+    })
+
+    bottom_right_value1.addEventListener('change', function(event) {
+      try {
+          clicked_coordinates['right'][0] = +bottom_right_value1.value
+          center = getCenter();
+        } catch (error) {
+          console.log(error);
+        }
+    })
+    bottom_right_value2.addEventListener('change', function(event) {
+      try {
+          clicked_coordinates['right'][1] = +bottom_right_value2.value
+          center = getCenter();
+        } catch (error) {
+          console.log(error);
+        }
+    })
+
+    function update_box_values() {
+      top_left_value1.value = clicked_coordinates['left'][0];
+      top_left_value2.value = clicked_coordinates['left'][1];
+      bottom_right_value1.value = clicked_coordinates['right'][0];
+      bottom_right_value2.value = clicked_coordinates['right'][1];
+    }
 
     imageUpload.addEventListener('change', function(event) {
       file = event.target.files[0];
@@ -104,9 +159,10 @@
       // reset clicked coordinates
       click1 = false;
       click2 = false;
-      clicked_coordinates = {'left': false, 'right': false}
+      clicked_coordinates = {'left': [0,0], 'right': [0,0]}
       center = false;
       image.style.cursor = "default";
+      update_box_values();
     });
 
     function getCenter() {
@@ -140,9 +196,15 @@
         return
       }
       image.style.cursor = "default";
+
+      update_box_values();
       if (clicked_coordinates['left'] && clicked_coordinates['right']) {
         
-        center = getCenter();
+        try {
+          center = getCenter();
+        } catch (error) {
+          alert(error);
+        }
         // console.log(center);
 
       }

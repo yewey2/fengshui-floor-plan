@@ -50,7 +50,7 @@ body {
 }
 
 #overlay-box {
-  display: none;
+  display: block;
   position: absolute;
   width: 0;
   height: 0;
