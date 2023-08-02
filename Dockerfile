@@ -7,4 +7,5 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-CMD gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 run:app;
+# CMD gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 run:app;
+CMD [ "guincorn", "-k" , "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "-w", "1", "run:app"]
