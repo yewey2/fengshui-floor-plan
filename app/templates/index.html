@@ -217,12 +217,13 @@
         console.log('angle not a number');
         return 
       }
-      console.log('image emitted');
+      console.log('image emitting');
       socket.emit('process_image', {
         'angle':angle, 
         'center':getCenter(),
         'img':file, }
       );
+      console.log('image emitted');
     }
     
     socket.on('display_img', function(data) {
