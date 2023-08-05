@@ -217,6 +217,7 @@
         console.log('angle not a number');
         return 
       }
+      console.log('image emitted');
       socket.emit('process_image', {
         'angle':angle, 
         'center':getCenter(),
@@ -225,6 +226,7 @@
     }
     
     socket.on('display_img', function(data) {
+      console.log('img received');
       // console.log(data['img']);
       // var enc = new TextDecoder("utf-8");
       // console.log(enc.decode(data['img']));
