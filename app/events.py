@@ -23,7 +23,7 @@ def handle_my_event(data):
     # negative angle to rotate acw
     print('processing image')
     start = timer()
-    img = overlay(data.get('img'), angle=-float(data.get('angle')), center=data.get('center'))
+    img = overlay(data.get('img'), angle=float(data.get('angle')), center=data.get('center'))
     end = timer()
     print('processed image after', end-start)
     emit('display_img', {'img': img})

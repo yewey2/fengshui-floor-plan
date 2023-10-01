@@ -19,7 +19,7 @@ def overlay(img_byte = None, img_path = None, angle=0, center=(0,0), factor=2):
     # img1.show()
     img2 = Image.open(r'app/static/octa.png').convert('RGBA')
     # img2.show()
-    img2 = img2.resize((int(factor*max(width, height)), int(factor*max(width, height)))).rotate(-angle)
+    img2 = img2.resize((int(factor*max(width, height)), int(factor*max(width, height)))).rotate(angle)
     length = img2.size[0]
     img1.paste(img2, (center[0]-length//2, center[1]-length//2), img2)
 
