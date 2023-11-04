@@ -146,8 +146,10 @@
     imageUpload.addEventListener('change', function(event) {
       file = event.target.files[0];
       console.log('file size', file.size);
-      if (file.size > 500000) {
-        document.getElementById('warning').innerHTML = "Warning. File size is " + file.size + " bytes, and may not run";
+      if (file.size > 5000000) {
+        document.getElementById('warning').innerHTML = "Error. File size is " + file.size + " bytes. It is too big! Please resize.";
+      } else if (file.size > 1000000) {
+        document.getElementById('warning').innerHTML = "Warning. File size is " + file.size + " bytes, and might take longer time to load.";
       } else {
         document.getElementById('warning').innerHTML = "";
       }
