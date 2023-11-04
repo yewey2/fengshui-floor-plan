@@ -16,6 +16,8 @@
   <main>
     <div id="main" class="main">
       <div id="left">
+        <span style="color:red" id="warning"></span>
+
         <h1>Fengshui Floor Plan Analysis</h1>
         <label for="new_img_upload">Upload your floor plan here: &nbsp;&nbsp;</label>
         <input type="file" name="new_img_upload" id="new_img_upload" accept="image/*"><br><br>
@@ -143,6 +145,12 @@
 
     imageUpload.addEventListener('change', function(event) {
       file = event.target.files[0];
+      console.log('file size', file.size);
+      if (file.size > 500000) {
+        document.getElementById('warning').innerHTML = "Warning. File size is " + file.size + " bytes, and may not run";
+      } else {
+        document.getElementById('warning').innerHTML = "";
+      }
       var reader = new FileReader();
 
       reader.onload = function(e) {
@@ -218,6 +226,7 @@
         return 
       }
       console.log('image emitting');
+      console.log(file.size);
       socket.emit('process_image', {
         'angle':angle, 
         'center':getCenter(),
